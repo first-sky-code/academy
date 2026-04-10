@@ -71,8 +71,24 @@
                                 <p class="info-label">Nama Lengkap</p>
                                 <p class="info-value">{{ $item->peserta_nama_lengkap ?? 'Belum diisi' }}</p>
 
-                                <p class="info-label">Kode Unik (NIP/NISN)</p>
-                                <p class="info-value">{{ $item->peserta_unique_code ?? '-' }}</p>
+                                <p class="info-label">
+                                    @if ($item->peserta_nisn)
+                                        NISN (Siswa)
+                                    @elseif($item->peserta_nip)
+                                        NIP (Pegawai)
+                                    @else
+                                        Identitas (NIP/NISN)
+                                    @endif
+                                </p>
+                                <p class="info-value">
+                                    @if ($item->peserta_nisn)
+                                        {{ $item->peserta_nisn }}
+                                    @elseif($item->peserta_nip)
+                                        {{ $item->peserta_nip }}
+                                    @else
+                                        -
+                                    @endif
+                                </p>
 
                                 <p class="info-label">
                                     @if ($item->sekolah_name)
@@ -99,8 +115,9 @@
                                 <p class="info-label">Nomor HP</p>
                                 <p class="info-value">{{ $item->peserta_no_hp ?? '-' }}</p>
 
-                                <p class="info-label">Tanggal Lahir</p>
+                                <p class="info-label">Tempat / Tanggal Lahir</p>
                                 <p class="info-value">
+                                    {{ $item->peserta_tempat_lahir ?? '-' }} /
                                     {{ $item->peserta_tanggal_lahir ? \Carbon\Carbon::parse($item->peserta_tanggal_lahir)->translatedFormat('d F Y') : '-' }}
                                 </p>
 
@@ -119,8 +136,8 @@
                         <a href="{{ route('peserta.beranda') }}#pelatihan"
                             class="btn btn-outline-primary rounded-pill px-4">Pilih
                             Pelatihan</a>
-                        <a href="{{ route('akun.edit') }}" class="btn btn-outline-secondary rounded-pill px-4">Edit
-                            Akun</a>
+                        {{-- <a href="{{ route('akun.edit') }}" class="btn btn-outline-secondary rounded-pill px-4">Edit
+                            Akun</a> --}}
                     </div>
                 </div>
             </div>

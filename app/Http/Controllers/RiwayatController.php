@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Mpdf\Mpdf;
 
 class RiwayatController extends Controller
 {
@@ -15,21 +16,18 @@ class RiwayatController extends Controller
         $riwayat = DB::table('pendaftaran')
             ->join('pelatihan', 'pendaftaran.pelatihan_id', '=', 'pelatihan.pelatihan_id')
             ->join('status', 'pendaftaran.status_id', '=', 'status.status_id')
-            // Menggunakan leftJoin ke tabel upload untuk mengecek keberadaan berkas
             ->leftJoin('upload', 'pendaftaran.pendaftaran_id', '=', 'upload.pendaftaran_id')
             ->where('pendaftaran.peserta_id', $pesertaId)
             ->select(
-                'pendaftaran.*', 
-                'pelatihan.pelatihan_name', 
+                'pendaftaran.*',
+                'pelatihan.pelatihan_name',
                 'status.status_name',
-                // Menghitung jumlah file yang sudah diunggah untuk pendaftaran ini
-                DB::raw('COUNT(upload.pendaftaran_id) as jumlah_upload') 
+                DB::raw('COUNT(upload.pendaftaran_id) as jumlah_upload')
             )
             ->groupBy(
-                'pendaftaran.pendaftaran_id', 
-                'pelatihan.pelatihan_name', 
+                'pendaftaran.pendaftaran_id',
+                'pelatihan.pelatihan_name',
                 'status.status_name',
-                // Masukkan semua kolom pendaftaran yang ada di select ke groupBy jika menggunakan MySQL mode strict
                 'pendaftaran.peserta_id',
                 'pendaftaran.pelatihan_id',
                 'pendaftaran.status_id',
@@ -40,5 +38,44 @@ class RiwayatController extends Controller
             ->get();
 
         return view('riwayat.index', compact('riwayat'));
+    }
+
+    public function bukti($id)
+    {
+        $data = DB::table('pendaftaran')
+            ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.peserta_id')
+            ->join('pelatihan', 'pendaftaran.pelatihan_id', '=', 'pelatihan.pelatihan_id')
+            ->leftJoin('sekolah', 'peserta.sekolah_id', '=', 'sekolah.sekolah_id')
+            ->leftJoin('opd', 'peserta.opd_id', '=', 'opd.opd_id')
+            ->select(
+                'pendaftaran.*',
+                'peserta.*',
+                'peserta.peserta_nisn',
+                'pelatihan.pelatihan_name',
+                'sekolah.sekolah_name',
+                'opd.opd_name'
+            )
+            ->where('pendaftaran.pendaftaran_id', $id)
+            ->first();
+
+        if (!$data) return redirect()->back();
+
+        $pathFoto = '';
+        if (!empty($data->peserta_foto)) {
+            $fullPath = storage_path('app/public/' . $data->peserta_foto);
+            if (file_exists($fullPath)) {
+                $pathFoto = $fullPath;
+            }
+        }
+
+        if (empty($pathFoto)) {
+            $pathFoto = public_path('nova/img/user.png');
+        }
+
+        $html = view('riwayat.bukti', compact('data', 'pathFoto'))->render();
+
+        $mpdf = new \Mpdf\Mpdf(['margin_left' => 10, 'margin_right' => 10]);
+        $mpdf->WriteHTML($html);
+        return $mpdf->Output('Bukti_Pendaftaran_' . $id . '.pdf', 'I');
     }
 }

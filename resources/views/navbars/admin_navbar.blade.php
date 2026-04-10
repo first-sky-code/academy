@@ -6,19 +6,19 @@
                 <div class="navbar-brand-box horizontal-logo">
                     <a href="{{ route('admins.landing') }}" class="logo logo-dark">
                         <span class="logo-sm">
-                            <img src="{{ asset('velzon/images/logo-sm.png') }}" alt="" height="22">
+                            <img src="{{ asset('nova/img/logo2.png') }}" alt="" height="22">
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ asset('velzon/images/logo-dark.png') }}" alt="" height="17">
+                            <img src="{{ asset('nova/img/logo2.png') }}" alt="" height="17">
                         </span>
                     </a>
 
                     <a href="{{ route('admins.landing') }}" class="logo logo-light">
                         <span class="logo-sm">
-                            <img src="{{ asset('velzon/images/logo-sm-light.png') }}" alt="" height="22">
+                            <img src="{{ asset('nova/img/logo2.png') }}" alt="" height="22">
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ asset('velzon/images/logo-light.png') }}" alt="" height="17">
+                            <img src="{{ asset('nova/img/logo2.png') }}" alt="" height="17">
                         </span>
                     </a>
                 </div>
@@ -58,8 +58,8 @@
                     <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user"
-                                src="{{ asset('velzon/images/users/avatar-1.png') }}" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="{{ asset('nova/img/user.png') }}"
+                                alt="Header Avatar">
                             <span class="text-start ms-xl-2">
                                 <span
                                     class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ Auth::user()->name }}</span>
@@ -103,10 +103,10 @@
                     </li>
                 @endif
                 @if (Auth::user()->usertype == 'admin')
-                <li class="nav-item">
-                    <a href="{{ route('admins.partpenting') }}" class="nav-link" data-key="t-analytics">
-                        Part Penting</a>
-                </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admins.partpenting') }}" class="nav-link" data-key="t-analytics">
+                            Part Penting</a>
+                    </li>
                 @endif
                 <li class="nav-item">
                     <a href="{{ route('pelatihan.pelatihan') }}" class="nav-link" data-key="t-analytics">

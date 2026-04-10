@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PendaftaranController extends Controller
 {
-    public function index($id, Request $request)
+    public function index($id)
     {
         $pelatihan = DB::table('pelatihan')
             ->leftJoin('kategori_pelatihan', 'pelatihan.kategori_pelatihan_id', '=', 'kategori_pelatihan.kategori_pelatihan_id')
@@ -40,11 +41,6 @@ class PendaftaranController extends Controller
             abort(404, 'Pelatihan tidak ditemukan');
         }
 
-        $syaratInput = DB::table('pelatihan_syarat')
-            ->join('syarat', 'pelatihan_syarat.syarat_id', '=', 'syarat.syarat_id')
-            ->where('pelatihan_syarat.pelatihan_id', $id)
-            ->get();
-
         $sudahDaftar = false;
         $tanggunganUploadId = null;
 
@@ -75,12 +71,13 @@ class PendaftaranController extends Controller
             'tanggungan_id' => $tanggunganUploadId,
         ];
 
-        return view('pendaftaran.index', ['data' => $data]);
+        return view('pendaftaran.index', compact('data'));
     }
-    public function store(Request $request, $id)
+
+    public function store($id)
     {
         $user = Auth::user();
-        if (!$user) return redirect()->back()->with('error', 'Sesi habis.');
+        if (!$user) return redirect()->back()->with('error', 'Silahkan login terlebih dahulu.');
 
         $tanggungan = DB::table('pendaftaran')
             ->leftJoin('upload', 'pendaftaran.pendaftaran_id', '=', 'upload.pendaftaran_id')
@@ -90,13 +87,11 @@ class PendaftaranController extends Controller
             ->first();
 
         if ($tanggungan) {
-
             if ($tanggungan->pelatihan_id == $id) {
                 return redirect()->route('pendaftaran.syarat', $tanggungan->pendaftaran_id);
             }
-
             return redirect()->route('pendaftaran.syarat', $tanggungan->pendaftaran_id)
-                ->with('error', 'Anda harus menyelesaikan unggah berkas pendaftaran sebelumnya terlebih dahulu.');
+                ->with('error', 'Selesaikan unggah berkas pendaftaran sebelumnya.');
         }
 
         $cek = DB::table('pendaftaran')
@@ -118,12 +113,14 @@ class PendaftaranController extends Controller
         return redirect()->route('pendaftaran.syarat', $pendaftaranId);
     }
 
-    public function inputSyarat($pendaftaranId)
+    public function inputSyarat($id)
     {
         $pendaftaran = DB::table('pendaftaran')
             ->join('pelatihan', 'pendaftaran.pelatihan_id', '=', 'pelatihan.pelatihan_id')
-            ->where('pendaftaran_id', $pendaftaranId)
+            ->where('pendaftaran_id', $id)
             ->first();
+
+        if (!$pendaftaran) abort(404);
 
         $syaratList = DB::table('pelatihan_syarat')
             ->join('syarat', 'pelatihan_syarat.syarat_id', '=', 'syarat.syarat_id')
@@ -133,15 +130,22 @@ class PendaftaranController extends Controller
         return view('pendaftaran.input', compact('pendaftaran', 'syaratList'));
     }
 
-    public function storeSyarat(Request $request, $pendaftaranId)
+    public function storeSyarat(Request $request, $id)
     {
-        $request->validate([
-            'file_syarat' => 'required|array',
-            'file_syarat.*' => 'file|mimes:jpg,jpeg,png,pdf|max:500',
-        ]);
+        $request->validate(
+            [
+                'file_syarat' => 'required|array',
+                'file_syarat.*' => 'file|mimes:jpg,jpeg,png,pdf|max:500',
+            ],
+            [
+                'file_syarat.*.max' => 'Ukuran file :attribute maksimal adalah 500 KB.',
+                'file_syarat.*.mimes' => 'Format file harus berupa JPG, PNG, atau PDF.',
+                'file_syarat.*.file' => 'Input harus berupa file valid.',
+            ]
+        );
 
         $user = Auth::user();
-        $pendaftaran = DB::table('pendaftaran')->where('pendaftaran_id', $pendaftaranId)->first();
+        $pendaftaran = DB::table('pendaftaran')->where('pendaftaran_id', $id)->first();
 
         if (!$pendaftaran) {
             return redirect()->back()->with('error', 'Data pendaftaran tidak ditemukan.');
@@ -150,18 +154,13 @@ class PendaftaranController extends Controller
         try {
             DB::transaction(function () use ($user, $request, $pendaftaran) {
                 if ($request->hasFile('file_syarat')) {
-                    $files = $request->file('file_syarat');
-
-                    foreach ($files as $syaratId => $file) {
-                        // Validasi tambahan: pastikan file valid sebelum diproses
+                    foreach ($request->file('file_syarat') as $syaratId => $file) {
                         if ($file && $file->isValid()) {
                             $syarat = DB::table('syarat')->where('syarat_id', $syaratId)->first();
                             $syarat_name = $syarat ? str_replace(' ', '_', $syarat->syarat_name) : 'Syarat_' . $syaratId;
-                            $peserta_name = str_replace(' ', '_', $user->peserta_name);
 
-                            // Tambahkan timestamp agar nama file unik jika user upload ulang
-                            $namaCustom = $syarat_name . '_' . $peserta_name . '.' . $file->extension();
-                            $pathSimpan = $file->storeAs('folder_syarat', $namaCustom, 'public');
+                            $namaCustom = $syarat_name . '_' . str_replace(' ', '_', $user->name) . '_' . time() . '.' . $file->extension();
+                            $pathSimpan = $file->storeAs('persyaratan', $namaCustom, 'public');
 
                             DB::table('upload')->updateOrInsert(
                                 [
@@ -177,7 +176,6 @@ class PendaftaranController extends Controller
                         }
                     }
 
-                    // PINDAHKAN update status ke LUAR foreach tapi tetap di DALAM hasFile
                     DB::table('pendaftaran')
                         ->where('pendaftaran_id', $pendaftaran->pendaftaran_id)
                         ->update([
@@ -189,7 +187,8 @@ class PendaftaranController extends Controller
 
             return redirect()->route('riwayat.index')->with('success', 'Persyaratan berhasil diunggah!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
+            dd($e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

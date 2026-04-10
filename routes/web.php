@@ -106,13 +106,15 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/beranda', [BerandaController::class, 'index'])->name('peserta.beranda');
 
-    Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
+    Route::controller(RiwayatController::class)->group(function () {
+        Route::get('/riwayat', 'index')->name('riwayat.index');
+        Route::get('/bukti/{id}', 'bukti')->name('riwayat.bukti');
+    });
 
     Route::controller(PendaftaranController::class)->group(function () {
         Route::post('/pendaftaran/{id}/store', 'store')->name('pendaftaran.store');
-        Route::get('/pendaftaran/syarat/{pendaftaranId}', 'inputSyarat')->name('pendaftaran.syarat');
-        Route::post('/pendaftaran/syarat/{pendaftaranId}/upload', 'storeSyarat')->name('pendaftaran.input');
-        Route::post('/pendaftaran/syarat/{pendaftaranId}/upload', 'storeSyarat')->name('pendaftaran.upload');
+        Route::get('/pendaftaran/{id}/syarat', 'inputSyarat')->name('pendaftaran.syarat');
+        Route::post('/pendaftaran/{id}/syarat', 'storeSyarat')->name('pendaftaran.upload');
     });
 
     Route::controller(AkunController::class)->group(function () {

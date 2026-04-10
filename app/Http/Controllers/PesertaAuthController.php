@@ -93,7 +93,6 @@ class PesertaAuthController extends Controller
         // Cek kelengkapan data
         if (
             empty($peserta->peserta_nama_lengkap) ||
-            empty($peserta->peserta_asal_instansi) ||
             empty($peserta->peserta_alamat) ||
             empty($peserta->peserta_no_hp) ||
             empty($peserta->peserta_foto)

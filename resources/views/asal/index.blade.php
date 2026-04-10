@@ -51,7 +51,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Sekolah</th>
+                                <th>Nama OPD</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>

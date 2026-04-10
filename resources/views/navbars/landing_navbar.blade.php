@@ -6,8 +6,10 @@
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
                         @auth('web')
-                            <a class="navbar-brand" href="{{ route('peserta.beranda') }}">
-                                <b>Kominfo Academy</b>
+                            <a class="logo" href="{{ route('home') }}">
+                                <span class="logo-sm">
+                                    <img src="{{ asset('nova/img/logo2.png') }}" alt="" height="25">
+                                </span>
                             </a>
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent6" aria-controls="navbarSupportedContent6"

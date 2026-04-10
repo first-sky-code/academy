@@ -99,6 +99,20 @@
                                         </div>
 
                                         <div class="mt-4">
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger alert-border-left alert-dismissible fade show"
+                                                    role="alert">
+                                                    <i class="ri-error-warning-line me-3 align-middle"></i> <strong>Ada
+                                                        kesalahan:</strong>
+                                                    <ul class="mb-0 mt-2">
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                            @endif
                                             <form class="needs-validation" novalidate action="{{ route('register') }}"
                                                 method="POST" enctype="multipart/form-data">
                                                 @csrf
@@ -125,16 +139,31 @@
                                                     <label class="form-label" for="password">Password</label>
                                                     <div class="position-relative auth-pass-inputgroup">
                                                         <input type="password"
-                                                            class="form-control pe-5 password-input"
-                                                            onpaste="return false" placeholder="Enter password"
-                                                            id="password" name="password" required>
+                                                            class="form-control pe-5 password-input @error('password') is-invalid @enderror"
+                                                            name="password" placeholder="Enter password"
+                                                            id="password" required>
                                                         <button
-                                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon material-shadow-none"
+                                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon"
+                                                            type="button"><i
+                                                                class="ri-eye-fill align-middle"></i></button>
+                                                        @error('password')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="password-confirm">Confirm
+                                                        Password</label>
+                                                    <div class="position-relative auth-pass-inputgroup">
+                                                        <input type="password"
+                                                            class="form-control pe-5 password-input"
+                                                            name="password_confirmation" placeholder="Repeat password"
+                                                            id="password-confirm" required>
+                                                        <button
+                                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
                                                             type="button" id="password-addon"><i
                                                                 class="ri-eye-fill align-middle"></i></button>
-                                                        <div class="invalid-feedback">
-                                                            Please enter password
-                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -231,17 +260,30 @@
     <!-- end auth-page-wrapper -->
 
     <!-- JAVASCRIPT -->
-    <script src="{{ asset('velzon/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('velzon/assets/libs/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('velzon/assets/libs/node-waves/waves.min.js') }}"></script>
-    <script src="{{ asset('velzon/assets/libs/feather-icons/feather.min.js') }}"></script>
-    <script src="{{ asset('velzon/assets/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
-    <script src="{{ asset('velzon/assets/js/plugins.js') }}"></script>
+    <script src="{{ asset('velzon/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('velzon/libs/simplebar/simplebar.min.js') }}"></script>
+    <script src="{{ asset('velzon/libs/node-waves/waves.min.js') }}"></script>
+    <script src="{{ asset('velzon/libs/feather-icons/feather.min.js') }}"></script>
+    <script src="{{ asset('velzon/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
+    <script src="{{ asset('velzon/js/plugins.js') }}"></script>
 
-    <!-- validation init -->
-    <script src="{{ asset('velzon/assets/js/pages/form-validation.init.js') }}"></script>
-    <!-- password create init -->
-    <script src="{{ asset('velzon/assets/js/pages/passowrd-create.init.js') }}"></script>
+    <script src="{{ asset('velzon/js/pages/form-validation.init.js') }}"></script>
+    <script src="{{ asset('velzon/js/pages/passowrd-create.init.js') }}"></script>
+
+    <script>
+        // Custom toggle untuk Confirm Password
+        if (document.getElementById('password-addon')) {
+            document.getElementById('password-addon').addEventListener('click', function() {
+                var passwordInput = document.getElementById('password-confirm');
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                } else {
+                    passwordInput.type = "password";
+                }
+            });
+        }
+    </script>
+
 </body>
 
 
