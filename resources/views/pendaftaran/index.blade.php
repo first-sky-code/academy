@@ -1,4 +1,5 @@
 @extends('backend.usertemplate')
+@section('title', "Pelatihan " . $data['tabel1']->pelatihan_name)
 @section('content')
     @include('navbars.landing_navbar')
     <h5 class="text-center">Selamat Datang di Halaman Pendaftaran</h5>

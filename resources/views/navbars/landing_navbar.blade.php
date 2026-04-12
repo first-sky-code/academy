@@ -6,7 +6,7 @@
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
                         @auth('web')
-                            <a class="logo" href="{{ route('home') }}">
+                            <a class="logo" href="{{ route('peserta.beranda') }}">
                                 <span class="logo-sm">
                                     <img src="{{ asset('nova/img/logo2.png') }}" alt="" height="25">
                                 </span>

@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Hapus Part Penting')
 @section('content')
     @include('navbars.admin_navbar')
     <div class="row">

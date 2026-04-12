@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Hapus Data Asal')
 @section('content')
     @include('navbars.admin_navbar')
     <div class="row">

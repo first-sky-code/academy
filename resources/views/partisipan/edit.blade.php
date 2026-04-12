@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Edit Status Pendaftaran: ' . $peserta->peserta_name)
 @section('content')
     @include('navbars.admin_navbar')
     <div class="card">

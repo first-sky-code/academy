@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Detail Pendaftar Pelatihan ' . $pelatihan->pelatihan_name)
 @section('content')
     @include('navbars.admin_navbar')
     <div class="card">

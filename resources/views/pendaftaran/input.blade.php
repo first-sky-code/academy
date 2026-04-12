@@ -1,4 +1,5 @@
 @extends('backend.usertemplate')
+@section('title', 'Input Persyaratan ' . $pendaftaran->pelatihan_name)
 @section('content')
     @include('navbars.landing_navbar')
     <h5 class="text-center mt-4">Langkah Terakhir: Unggah Persyaratan</h5>

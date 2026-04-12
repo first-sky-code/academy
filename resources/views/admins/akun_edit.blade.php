@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Edit Akun Admin')
 @section('content')
     @include('navbars.admin_navbar')
     <div class="container shadow rounded p-4 mt-4" style="background-color: white">

@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', $data['id'] == 0 ? 'Input Status' : 'Edit Status')
 @section('content')
     @include('navbars.admin_navbar')
     <h1 class="text-center">{{ $data['id'] == 0 ? 'Input Status' : 'Edit Status' }}</h1>

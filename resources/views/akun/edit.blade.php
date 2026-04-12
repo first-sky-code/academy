@@ -1,4 +1,5 @@
 @extends('backend.usertemplate')
+@section('title', 'Edit Akun Saya')
 @section('content')
     @include('navbars.landing_navbar')
 

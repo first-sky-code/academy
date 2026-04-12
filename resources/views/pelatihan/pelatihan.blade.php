@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Pelatihan')
 @section('content')
     @include('navbars.admin_navbar')
     <div class="card">

@@ -1,4 +1,5 @@
 @extends('backend.admintemplate')
+@section('title', 'Input OPD')
 @section('content')
     @include('navbars.admin_navbar')
     <h1 class="text-center">{{ $data['id'] == 0 ? 'Input OPD' : 'Edit OPD' }}</h1>

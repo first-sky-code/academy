@@ -1,4 +1,5 @@
 @extends('backend.usertemplate')
+@section('title', 'Beranda')
 @section('content')
     <!-- ========================= hero-section-wrapper-5 start ========================= -->
     <section id="home" class="hero-section-wrapper-5">

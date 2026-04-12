@@ -74,9 +74,7 @@ class AkunController extends Controller
                 Storage::disk('public')->delete($peserta->peserta_foto);
             }
         }
-
-        // Update semua field termasuk data instansi dan kode unik
-        // Update semua field
+        
         DB::table('peserta')->where('peserta_id', Auth::user()->peserta_id)->update([
             'peserta_nama_lengkap'  => $request->peserta_nama_lengkap,
             'peserta_tempat_lahir'  => $request->peserta_tempat_lahir,
@@ -86,8 +84,6 @@ class AkunController extends Controller
             'peserta_tanggal_lahir' => $request->peserta_tanggal_lahir,
             'sekolah_id'            => $request->sekolah_id,
             'opd_id'                => $request->opd_id,
-
-            // Logika tambahan: Jika NISN diisi, NIP dikosongkan, dan sebaliknya
             'peserta_nisn'          => $request->peserta_nisn,
             'peserta_nip'           => $request->peserta_nip,
 

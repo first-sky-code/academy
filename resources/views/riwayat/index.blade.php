@@ -1,4 +1,5 @@
 @extends('backend.usertemplate')
+@section('title', 'Riwayat Pendaftaran Pelatihan')
 @section('content')
     @include('navbars.landing_navbar')
     <table class="table">

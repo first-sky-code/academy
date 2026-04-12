@@ -8,12 +8,12 @@
 <head>
 
     <meta charset="utf-8" />
-    <title></title>
+    <title>Academy - @yield('title', 'Signin')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('velzon / images / favicon . ico ') }}">
+    <link rel="icon" type="image/png" href="{{ asset('nova/img/logo3.png') }}">
 
     <!-- Layout config Js -->
     <script src="{{ asset('velzon/js/layout.js') }}"></script>
