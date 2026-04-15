@@ -21,7 +21,18 @@
                     @forelse($pendaftar as $p)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $p->peserta_name }}</td>
+                            <td>
+                                <strong>{{ $p->peserta_nama_lengkap }}</strong> <br>
+                                <small class="text-muted">
+                                    @if ($p->peserta_nisn)
+                                        NISN: {{ $p->peserta_nisn }}
+                                    @elseif($p->peserta_nip)
+                                        NIP: {{ $p->peserta_nip }}
+                                    @else
+                                        <span class="text-danger">Identitas tidak ada</span>
+                                    @endif
+                                </small>
+                            </td>
                             <td>
                                 {{ $p->peserta_no_hp }} <br>
                                 <small class="text-muted">{{ $p->peserta_alamat }}</small>
@@ -44,7 +55,8 @@
                                 <span class="badge bg-info mb-1">{{ $p->status_name }}</span><br>
 
                                 {{-- Tombol Edit --}}
-                                <a href="{{ route('partisipan.edit', $p->pendaftaran_id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('partisipan.edit', $p->pendaftaran_id) }}"
+                                    class="btn btn-warning btn-sm">
                                     <i class="ri-edit-box-line"></i> Edit Status
                                 </a>
                             </td>

@@ -79,20 +79,20 @@ class PendaftaranController extends Controller
         $user = Auth::user();
         if (!$user) return redirect()->back()->with('error', 'Silahkan login terlebih dahulu.');
 
-        $tanggungan = DB::table('pendaftaran')
-            ->leftJoin('upload', 'pendaftaran.pendaftaran_id', '=', 'upload.pendaftaran_id')
-            ->where('pendaftaran.peserta_id', $user->peserta_id)
-            ->whereNull('upload.pendaftaran_id')
-            ->select('pendaftaran.pendaftaran_id', 'pendaftaran.pelatihan_id')
-            ->first();
+        // $tanggungan = DB::table('pendaftaran')
+        //     ->leftJoin('upload', 'pendaftaran.pendaftaran_id', '=', 'upload.pendaftaran_id')
+        //     ->where('pendaftaran.peserta_id', $user->peserta_id)
+        //     ->whereNull('upload.pendaftaran_id')
+        //     ->select('pendaftaran.pendaftaran_id', 'pendaftaran.pelatihan_id')
+        //     ->first();
 
-        if ($tanggungan) {
-            if ($tanggungan->pelatihan_id == $id) {
-                return redirect()->route('pendaftaran.syarat', $tanggungan->pendaftaran_id);
-            }
-            return redirect()->route('pendaftaran.syarat', $tanggungan->pendaftaran_id)
-                ->with('error', 'Selesaikan unggah berkas pendaftaran sebelumnya.');
-        }
+        // if ($tanggungan) {
+        //     if ($tanggungan->pelatihan_id == $id) {
+        //         return redirect()->route('pendaftaran.syarat', $tanggungan->pendaftaran_id);
+        //     }
+        //     return redirect()->route('pendaftaran.syarat', $tanggungan->pendaftaran_id)
+        //         ->with('error', 'Selesaikan unggah berkas pendaftaran sebelumnya.');
+        // }
 
         $cek = DB::table('pendaftaran')
             ->where('peserta_id', $user->peserta_id)
@@ -159,8 +159,8 @@ class PendaftaranController extends Controller
                             $syarat = DB::table('syarat')->where('syarat_id', $syaratId)->first();
                             $syarat_name = $syarat ? str_replace(' ', '_', $syarat->syarat_name) : 'Syarat_' . $syaratId;
 
-                            $namaCustom = $syarat_name . '_' . str_replace(' ', '_', $user->name) . '_' . time() . '.' . $file->extension();
-                            $pathSimpan = $file->storeAs('persyaratan', $namaCustom, 'public');
+                            $namaCustom = $syarat_name . '_' . str_replace(' ', '_', $user->peserta_nama_lengkap) . '_' . time() . '.' . $file->extension();
+                            $pathSimpan = $file->storeAs('folder_syarat', $namaCustom, 'public');
 
                             DB::table('upload')->updateOrInsert(
                                 [

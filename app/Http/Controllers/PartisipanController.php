@@ -37,15 +37,31 @@ class PartisipanController extends Controller
 
         $pelatihan = DB::table('pelatihan')->where('pelatihan_id', $id)->first();
 
-        if (!$pelatihan || ($user->usertype !== 'admin' && $pelatihan->users_id !== $user->id)) {
-            return redirect()->route('partisipan.index')->with('error', 'Anda tidak memiliki hak akses ke data ini.');
+        // DEBUG: Hapus ini setelah ketemu penyakitnya
+        if (!$pelatihan) {
+            dd("Pelatihan ID $id tidak ditemukan di database!");
         }
 
+        if ($user->usertype !== 'admin' && $pelatihan->users_id !== $user->id) {
+            dd("Akses Ditolak! Usertype Anda: " . $user->usertype . " | ID Anda: " . $user->id . " | Owner ID: " . $pelatihan->users_id);
+        }
+
+        if (!$pelatihan || (trim($user->usertype) != 'admin' && $pelatihan->users_id != $user->id)) {
+            return redirect()->route('partisipan.index')->with('error', 'Anda tidak memiliki hak akses.');
+        }
         $pendaftar = DB::table('pendaftaran')
             ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.peserta_id')
             ->join('status', 'pendaftaran.status_id', '=', 'status.status_id')
             ->where('pendaftaran.pelatihan_id', $id)
-            ->select('pendaftaran.*', 'peserta.peserta_name', 'peserta.peserta_alamat', 'peserta.peserta_no_hp', 'status.status_name')
+            ->select(
+                'pendaftaran.*',
+                'peserta.peserta_nama_lengkap',
+                'peserta.peserta_alamat',
+                'peserta.peserta_no_hp',
+                'peserta.peserta_nisn', // Tambahkan ini
+                'peserta.peserta_nip',  // Tambahkan ini
+                'status.status_name'
+            )
             ->get();
 
         $uploads = DB::table('upload')

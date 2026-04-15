@@ -4,7 +4,7 @@
     @include('navbars.admin_navbar')
     <div class="card">
         <div class="card-header">
-            <h5>Edit Status Pendaftaran: {{ $peserta->peserta_name }}</h5>
+            <h5>Edit Status Pendaftaran: {{ $peserta->peserta_nama_lengkap }}</h5>
         </div>
         <div class="card-body">
             <form action="{{ route('partisipan.update', $data->pendaftaran_id) }}" method="POST">

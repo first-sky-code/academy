@@ -87,6 +87,7 @@
 
     <script>
         const syaratData = @json($data['syarat'] ?? []);
+        const syaratTerpilih = @json($data['syarat_terpilih'] ?? []); // Data dari Controller
         const syaratContainer = document.getElementById('dynamic-syarat-container');
 
         function createDynamicRow(container, dataList, nameAttr, isFirst = false, selectedValue = "", type = "Syarat") {
@@ -99,6 +100,7 @@
             dataList.forEach(item => {
                 const id = item[`${type.toLowerCase()}_id`];
                 const name = item[`${type.toLowerCase()}_name`];
+                // Perbaikan: gunakan == agar id integer dan string bisa cocok
                 const selected = id == selectedValue ? 'selected' : '';
                 options += `<option value="${id}" ${selected}>${name}</option>`;
             });
@@ -137,15 +139,26 @@
             });
         }
 
-        // Jalankan Syarat Dinamis saat Load
+        // --- LOGIKA PEMANGGILAN DATA SAAT LOAD ---
         if (syaratContainer) {
-            createDynamicRow(syaratContainer, syaratData, 'syarat_id', true, "", "Syarat");
+            if (syaratTerpilih.length > 0) {
+                // Jika ada data (Mode Edit), buat baris untuk setiap syarat terpilih
+                syaratTerpilih.forEach((val, index) => {
+                    createDynamicRow(syaratContainer, syaratData, 'syarat_id', (index === 0), val, "Syarat");
+                });
+                // Tambahkan satu baris kosong di bawah agar admin bisa nambah lagi
+                createDynamicRow(syaratContainer, syaratData, 'syarat_id', false, "", "Syarat");
+            } else {
+                // Jika data kosong (Mode Input Baru)
+                createDynamicRow(syaratContainer, syaratData, 'syarat_id', true, "", "Syarat");
+            }
         }
 
         document.addEventListener('change', function(e) {
             if (e.target.classList.contains('select-syarat-dinamis')) {
                 updateOptions('.select-syarat-dinamis');
                 const rows = document.querySelectorAll('.syarat-row');
+                // Tambah baris baru jika baris terakhir sudah diisi
                 if (e.target === rows[rows.length - 1].querySelector('select') && e.target.value !== "") {
                     createDynamicRow(syaratContainer, syaratData, 'syarat_id', false, "", "Syarat");
                 }
@@ -157,6 +170,21 @@
                 e.target.closest('.syarat-row').remove();
                 updateOptions('.select-syarat-dinamis');
             }
+        });
+
+        $('#pelatihan_tatacara').summernote({
+            placeholder: 'Masukkan tata cara pendaftaran pelatihan',
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
         });
     </script>
 @endsection

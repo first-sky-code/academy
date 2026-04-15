@@ -60,6 +60,7 @@ class RiwayatController extends Controller
 
         if (!$data) return redirect()->back();
 
+        // Logika Path Foto
         $pathFoto = '';
         if (!empty($data->peserta_foto)) {
             $fullPath = storage_path('app/public/' . $data->peserta_foto);
@@ -76,6 +77,15 @@ class RiwayatController extends Controller
 
         $mpdf = new \Mpdf\Mpdf(['margin_left' => 10, 'margin_right' => 10]);
         $mpdf->WriteHTML($html);
-        return $mpdf->Output('Bukti_Pendaftaran_' . $id . '.pdf', 'I');
+
+        // --- BAGIAN PERUBAHAN NAMA FILE ---
+        $pelatihan = $data->pelatihan_name;
+        $namaPeserta = $data->peserta_nama_lengkap ?? $data->peserta_name;
+
+        // Membersihkan karakter yang tidak diperbolehkan dalam nama file
+        $fileName = "Bukti Pendaftaran " . $pelatihan . " " . $namaPeserta . ".pdf";
+        $fileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $fileName);
+
+        return $mpdf->Output($fileName, 'I');
     }
 }

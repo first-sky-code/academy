@@ -1,5 +1,5 @@
 @extends('backend.usertemplate')
-@section('title', "Pelatihan " . $data['tabel1']->pelatihan_name)
+@section('title', 'Pelatihan ' . $data['tabel1']->pelatihan_name)
 @section('content')
     @include('navbars.landing_navbar')
     <h5 class="text-center">Selamat Datang di Halaman Pendaftaran</h5>
@@ -10,14 +10,16 @@
                 style="background: white; padding:20px; border-radius:10px; margin-top:20px;" novalidate>
                 @csrf
                 <input type="hidden" name="id" value="{{ $data['id'] }}">
-                <div class="text-center mb-4">
-                    <p>Halo Semua! Sudah siap untuk mengikuti pelatihan 
+                <div class=" mb-4">
+                    <p style="text-align: center">Halo Semua! Sudah siap untuk mengikuti pelatihan
                         <strong>{{ $data['tabel1']->pelatihan_name }}</strong> ini?
                     </p>
                     <div class="bg-light p-3 rounded my-3">
-                        <p class="mb-0 italic">"{{ $data['tabel1']->pelatihan_tatacara }}"</p>
+                        <div>
+                            {!! $data['tabel1']->pelatihan_tatacara !!}
+                        </div>
                     </div>
-                    <p>Tunggu apa lagi? Ayo Daftar Sekarang!</p>
+                    <p style="text-align: center">Tunggu apa lagi? Ayo Daftar Sekarang!</p>
                 </div>
 
                 <hr>
@@ -50,32 +52,42 @@
                     </table>
                 </div>
 
-                <p class="text-center">
-                    @php
-                        $hari_ini = \Carbon\Carbon::now()->setTimezone('Asia/Jakarta')->startOfDay();
-                        $tgl_mulai = \Carbon\Carbon::parse($data['tabel1']->pelatihan_mulai)->startOfDay();
-                        $tgl_tutup = \Carbon\Carbon::parse($data['tabel1']->pelatihan_tutup)->startOfDay();
-                    @endphp
+                @php
+                    $hari_ini = \Carbon\Carbon::now()->setTimezone('Asia/Jakarta')->startOfDay();
+                    $tgl_mulai = \Carbon\Carbon::parse($data['tabel1']->pelatihan_mulai)->startOfDay();
+                    $tgl_tutup = \Carbon\Carbon::parse($data['tabel1']->pelatihan_tutup)->startOfDay();
+                @endphp
 
-                    @if ($data['sudah_daftar'])
-                        <button type="button" class="btn rounded-pill btn-success mt-4" disabled>
-                            <i class="ri-checkbox-circle-line label-icon align-middle rounded-pill fs-12 me-1"></i> Anda Sudah Terdaftar
-                        </button>
-                    @elseif ($hari_ini->greaterThanOrEqualTo($tgl_mulai) && $hari_ini->lessThanOrEqualTo($tgl_tutup))
-                        @auth('web')
+                <p class="text-center">
+                    {{-- 1. Cek apakah user sudah login atau belum (Utamakan Login) --}}
+                    @guest('web')
+                        <a href="/auth-google-redirect"
+                            class="btn rounded-pill btn-outline-primary waves-effect waves-light mt-4">
+                            <i class="ri-google-fill label-icon align-middle rounded-pill fs-12 me-1"></i>
+                            Login untuk Daftar
+                        </a>
+                    @else
+                        {{-- 2. Jika sudah login, baru cek status pendaftaran --}}
+                        @if ($data['sudah_daftar'])
+                            <button type="button" class="btn rounded-pill btn-success mt-4" disabled>
+                                <i class="ri-checkbox-circle-line label-icon align-middle rounded-pill fs-12 me-1"></i>
+                                Anda Sudah Terdaftar
+                            </button>
+                        @elseif ($hari_ini->greaterThanOrEqualTo($tgl_mulai) && $hari_ini->lessThanOrEqualTo($tgl_tutup))
                             <button type="submit" class="btn rounded-pill btn-primary waves-effect waves-light mt-4 px-5">
-                                <i class="ri-check-line label-icon align-middle rounded-pill fs-12 me-1"></i> Klik Untuk Daftar
+                                <i class="ri-check-line label-icon align-middle rounded-pill fs-12 me-1"></i>
+                                Klik Untuk Daftar
+                            </button>
+                        @elseif ($hari_ini->lessThan($tgl_mulai))
+                            <button type="button" class="btn rounded-pill btn-outline-secondary mt-4" disabled>
+                                Pendaftaran Belum Dibuka
                             </button>
                         @else
-                            <a href="/auth-google-redirect" class="btn rounded-pill btn-outline-primary waves-effect waves-light mt-4">
-                                <i class="ri-google-fill label-icon align-middle rounded-pill fs-12 me-1"></i> Login untuk Daftar
-                            </a>
-                        @endauth
-                    @elseif ($hari_ini->lessThan($tgl_mulai))
-                        <button type="button" class="btn rounded-pill btn-outline-secondary mt-4" disabled>Pendaftaran Belum Dibuka</button>
-                    @else
-                        <button type="button" class="btn rounded-pill btn-outline-danger mt-4" disabled>Pendaftaran Sudah Ditutup</button>
-                    @endif
+                            <button type="button" class="btn rounded-pill btn-outline-danger mt-4" disabled>
+                                Pendaftaran Sudah Ditutup
+                            </button>
+                        @endif
+                    @endguest
                 </p>
             </form>
         </div>

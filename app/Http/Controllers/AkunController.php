@@ -67,7 +67,7 @@ class AkunController extends Controller
 
         if ($request->hasFile('peserta_foto')) {
             $image = $request->file('peserta_foto');
-            $imageName = Auth::user()->peserta_name . '.' . $image->extension();
+            $imageName = Auth::user()->peserta_name . '.' . time() . '.' . $image->extension();
             $simpan = $image->storeAs('foto_peserta', $imageName, 'public');
 
             if ($peserta->peserta_foto) {
