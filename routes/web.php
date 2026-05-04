@@ -82,6 +82,7 @@ Route::middleware('auth:admin', 'verified')->group(function () {
         Route::get('/partisipan/edit/{id}', 'edit')->name('partisipan.edit');
         Route::post('/partisipan/update/{id}', 'update')->name('partisipan.update');
         Route::get('/partisipan/detail/{id}', 'showPendaftar')->name('partisipan.detail');
+        Route::get('/partisipan/cetak-absen/{id}', 'cetakAbsen')->name('partisipan.cetak_absen');
     });
 
     Route::controller(AsalController::class)->group(function () {

@@ -3,8 +3,12 @@
 @section('content')
     @include('navbars.admin_navbar')
     <div class="card">
-        <div class="card-header align-items-center d-flex">
+        <div class="card-header align-items-center d-flex justify-content-between">
             <h4>Daftar Peserta Pelatihan: {{ $pelatihan->pelatihan_name }}</h4>
+            <a href="{{ route('partisipan.cetak_absen', $pelatihan->pelatihan_id) }}" target="_blank"
+                class="btn btn-danger btn-sm">
+                <i class="ri-file-pdf-line"></i> Cetak Daftar Hadir (PDF)
+            </a>
         </div>
         <div class="card-body">
             <table class="table table-striped">

@@ -114,4 +114,44 @@ class PartisipanController extends Controller
         return redirect()->route('partisipan.detail', $pendaftaran->pelatihan_id)
             ->with('success', 'Status pendaftaran berhasil diperbarui');
     }
+
+    public function cetakAbsen($id)
+    {
+        $pelatihan = DB::table('pelatihan')->where('pelatihan_id', $id)->first();
+
+        if (!$pelatihan) {
+            return redirect()->back()->with('error', 'Data pelatihan tidak ditemukan.');
+        }
+
+        $pendaftar = DB::table('pendaftaran')
+            ->join('peserta', 'pendaftaran.peserta_id', '=', 'peserta.peserta_id')
+            // Join ke tabel status untuk mendapatkan nama status
+            ->join('status', 'pendaftaran.status_id', '=', 'status.status_id')
+            ->leftJoin('sekolah', 'peserta.sekolah_id', '=', 'sekolah.sekolah_id')
+            ->leftJoin('opd', 'peserta.opd_id', '=', 'opd.opd_id')
+            ->where('pendaftaran.pelatihan_id', $id)
+            // Filter berdasarkan kolom status_name di tabel status
+            ->where('status.status_name', 'Pendaftaran Diterima')
+            ->select(
+                'peserta.peserta_nama_lengkap',
+                'peserta.peserta_nisn',
+                'peserta.peserta_nip',
+                'peserta.peserta_alamat',
+                'sekolah.sekolah_name',
+                'opd.opd_name'
+            )
+            ->orderBy('peserta.peserta_nama_lengkap', 'asc')
+            ->get();
+
+        // if ($pendaftar->isEmpty()) {
+        //     return redirect()->back()->with('info', 'Belum ada peserta dengan status Pendaftaran Diterima.');
+        // }
+
+        $html = view('partisipan.cetak_absen', compact('pendaftar', 'pelatihan'))->render();
+
+        $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+        $mpdf->WriteHTML($html);
+
+        return $mpdf->Output('Absensi_' . $pelatihan->pelatihan_name . '.pdf', 'I');
+    }
 }
